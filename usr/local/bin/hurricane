@@ -73,6 +73,6 @@ if ($opt_i) {
 	die "Could not get info on hurricane: $!\n" unless $rc == 0;
 }
 
-if ($opt_h) {
+if ($opt_h or scalar(@ARGV) == 0) {
 	help();
 }
