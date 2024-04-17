@@ -23,6 +23,10 @@ getopts('cdihZ');
 # debug flag
 $debug = 1 if $opt_Z;
 
+if ($opt_h or scalar(@ARGV) == 0) {
+	help();
+}
+
 # get info on hurricane
 my $info = `bluetoothctl info $hurricane`;
 print "here is the info: $info\n" if $debug;
@@ -71,8 +75,4 @@ if ($opt_i) {
 	
 	$rc = system("bluetoothctl info $hurricane");
 	die "Could not get info on hurricane: $!\n" unless $rc == 0;
-}
-
-if ($opt_h or scalar(@ARGV) == 0) {
-	help();
 }
