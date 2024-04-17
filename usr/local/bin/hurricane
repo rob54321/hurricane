@@ -14,16 +14,20 @@ sub help {
 	print "-c connect\n";
 	print "-d disconnect\n";
 	print "-i info\n";
-	print "-Z debug on";
+	print "-Z debug on\n";
 	exit 0;
 }
+
+# get no of comman line parameters
+# before getopts pops them all
+my $no = scalar(@ARGV);
 
 getopts('cdihZ');
 
 # debug flag
 $debug = 1 if $opt_Z;
 
-if ($opt_h or scalar(@ARGV) == 0) {
+if ($opt_h or $no == 0) {
 	help();
 }
 
