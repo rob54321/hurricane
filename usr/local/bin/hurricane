@@ -1,0 +1,78 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Std;
+
+our ($opt_c, $opt_d, $opt_i, $opt_h, $opt_Z);
+
+my $hurricane = "00:1f:33:86:88:13";
+my $debug = 0;
+
+sub help {
+	print "-c connect\n";
+	print "-d disconnect\n";
+	print "-i info\n";
+	print "-Z debug on";
+	exit 0;
+}
+
+getopts('cdihZ');
+
+# debug flag
+$debug = 1 if $opt_Z;
+
+# get info on hurricane
+my $info = `bluetoothctl info $hurricane`;
+print "here is the info: $info\n" if $debug;
+
+my $rc;
+
+# to connect
+if ($opt_c) {
+	print "opt c given\n" if $debug;
+	
+	# get info on device
+	if ( $info =~ /Connected: no/) {
+		# not connected. connect it
+		$rc = system("bluetoothctl connect $hurricane");
+		die "Could not connect hurricane: $!\n" unless $rc == 0;
+
+	} elsif ($info =~ /Connected: yes/) {
+		# already connected
+		print "hurricane already connected\n";
+
+	} elsif (($rc = system("bluetoothctl info $hurricane")) != 0) {
+		print "hurricane not found\n";
+	}
+}
+
+# to disconnect
+if ($opt_d) {
+	print "opt_d given\n" if $debug;
+	
+	# disconnect if connect
+	if ($info =~ /Connected: yes/) {
+		$rc = system("bluetoothctl disconnect $hurricane");
+		die "Could not disconnect hurricane: $!\n" unless $rc == 0;
+
+	} elsif ($info =~ /Connected: no/) {
+		print "hurricane not connected\n";
+
+	} elsif (($rc = system("bluetoothctl info $hurricane")) != 0) {
+		print "hurricane not found\n";
+	}
+}
+
+# for info
+if ($opt_i) {
+	print "opt_i given\n" if $debug;
+	
+	$rc = system("bluetoothctl info $hurricane");
+	die "Could not get info on hurricane: $!\n" unless $rc == 0;
+}
+
+if ($opt_h) {
+	help();
+}
